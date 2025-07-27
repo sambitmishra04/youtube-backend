@@ -1,0 +1,4 @@
+# git ignore generators also exist: mrkandreev.nama
+.env
+node_modules
+# what if we ignore gitnore
