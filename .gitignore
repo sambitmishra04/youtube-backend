@@ -1,7 +1,7 @@
 # git ignore generators also exist: mrkandreev.nama
 .env
 node_modules
-notes.md
-*notes.md
+# notes.md
+# *notes.md
 # what if we ignore .gitignore
 # * is basically any all text file placeholder
