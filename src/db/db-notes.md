@@ -10,3 +10,8 @@
 - above happened when we changed mongo password in uri
 - **proper error messages necesaary to backtrack and resolve errors**
 - trial error for debugging
+
+
+## async
+
+- whenever an async method completes it also retutrns a promise => **use then and catch**
