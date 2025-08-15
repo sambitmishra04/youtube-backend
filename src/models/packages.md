@@ -10,6 +10,13 @@
 
 - both bcrypt and jwt make tokens(based on cryptography)
 - jwt.io website to read tokens
+- read github readme
 - tokens are not human readable , made from cryptographic agorithms
 - has headers, payload, verify signature
 - **cryptographic algorithm** is available publicly : anyone can decode bbut **secret** makes each toen unique and protects everything
+
+
+## jwt in details
+
+- jwt is a bearer token. 
+- whoever has this token, send data to him

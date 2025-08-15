@@ -55,15 +55,56 @@ const userSchema = new Schema({
 })
 
 // direct encryption is not possible
-//note: mongoose -> middlewares -> hooks -> prehook  (just before data is saved(by call/controller) run this hook)
+//note: mongoose -> middlewares -> hooks -> prehook  (just before data is saved(or any other event)(by call/controller) run this hook)
 userSchema.pre("save",async function(next) { // do just before save event
     // arrow functions doest have this reference . dont use here(we need current context user)
     // ecncryption takes time: make async
     // middleware: next must be there
 
-    if(! this.isModified("password")) return next()
+    if(!this.isModified("password")) return next() //! encrypt password only when it is modified not everytime any other change is made to user data
     
     this.password = bcrypt.hash(this.password, 10) //encrypt and modify the password
     next()
 }) 
+
+// designing and injecting custom methods (using methods object of mongoose)
+userSchema.methods.isPasswordCorrect = async function (password) {
+    return await bcrypt.compare(password, this.password) //* compare password entered by user and encrypted password in DB
+    //* returns a bool
+}
+
+
+//! time for jwt tokens
+// another method to generate access token
+userSchema.methods.generateAccessToken = function() {
+    //* it is fast: async not required
+    return jwt.sign( // generateds token
+
+        {   // payload : data to store
+            _id:this._id,
+            email: this.email, // can get this from db query not necessary to store here
+            username: this.username,
+            fullname: this.fullname
+        },
+        process.env.ACCESS_TOKEN_SECRET,
+        {
+            expiresIn: process.env.ACCESS_TOKEN_EXPIRY
+        }
+    )
+}
+
+// another method to generate refresh token
+userSchema.methods.generateRefeshToken = function() {
+    //* it is fast: async not required
+     return jwt.sign( 
+        {   
+            _id: this._id,
+            //* refresh token gets refreshed repeatedly: so only store id(less data)
+        },
+        process.env.REFRESH_TOKEN_SECRET,
+        {
+            expiresIn: process.env.REFRESH_TOKEN_EXPIRY
+        }
+    )
+}
 export const User = mongoose.model("User", userSchema)
