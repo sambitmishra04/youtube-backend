@@ -2,6 +2,7 @@
 import dotenv from "dotenv" //note: better for our case : but need to config below 
 // this is recently introduced: experimental : modify package.json
 import connectDB from './db/index.js'
+import { app } from "./app.js"
 
 dotenv.config({
     path: './env'

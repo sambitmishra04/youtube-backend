@@ -20,6 +20,15 @@ app.use(express.urlencoded({extended: true, limit: "16kb"})) //* data in url com
 app.use(express.static("public")) // storing static files/folders in backend server: eg: pdf, image
 // folder name can be anything
 
-app.use(cookieParser) // options availabel but not needed
+app.use(cookieParser()) // options availabel but not needed
+
+
+// routes import
+import userRouter from './routes/user.routes.js'
+
+
+//routes decalaration
+// app.use("/users", userRouter)
+app.use("/api/v1/users", userRouter)
 
 export { app }
