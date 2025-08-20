@@ -58,12 +58,12 @@ const userSchema = new Schema({
 //note: mongoose -> middlewares -> hooks -> prehook  (just before data is saved(or any other event)(by call/controller) run this hook)
 userSchema.pre("save",async function(next) { // do just before save event
     // arrow functions doest have this reference . dont use here(we need current context user)
-    // ecncryption takes time: make async
+    // ecncryption takes time: make async await
     // middleware: next must be there
 
     if(!this.isModified("password")) return next() //! encrypt password only when it is modified not everytime any other change is made to user data
     
-    this.password = bcrypt.hash(this.password, 10) //encrypt and modify the password
+    this.password = await bcrypt.hash(this.password, 10) //encrypt and modify the password
     next()
 }) 
 
