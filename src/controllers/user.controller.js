@@ -4,6 +4,23 @@ import { User } from "../models/user.model.js"  // to check if user already exis
 import { uploadOnCLoudinary } from "../utils/cloudinary.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 
+// separate method for tokens
+const generateAceessAndRefreshTokens = async(userId) => {  // our internal method, not web request handler so asunc handler util not required
+   try {
+      const user = await User.findById(userId) // find user
+      const accessToken = user.generateAceessToken()
+      const refreshToken = user.generatRefreshToken()
+
+      user.refreshToken = refreshToken // injecting refresh token to the user object, ie save to db
+      await user.save({validateBeforeSave: false}) // save to db but dont validate all fields (we add only one field here, mongo wont save usually as we have given other fields as reuired also)
+
+      return {accessToken, refreshToken}
+
+   } catch (error) {
+      throw new ApiError(500, "Something went wrong while generating refresh and access token") // 500 as our own internal server error
+   }
+}
+
 //! logic building is dividing task into steps and solve each
 const registerUser = asyncHandler( async (req, res) => {
    // get user details from frontend (using postman here) => all fields expect watch history and refresh token not needed at time of registration
@@ -117,4 +134,82 @@ const registerUser = asyncHandler( async (req, res) => {
 
 })
 
-export {registerUser}
+//! login
+const loginUser = asyncHandler(async (req,res) => {
+   // req body -> data
+   // username or email
+   // find the user
+   // password check
+   // access and refresh token generate
+   // send tokens through secure cookies
+
+   //! req body
+   const {email, username, password} = req.body
+
+   //! username or email
+   if (!username || !email) { // atleast one of these must be given by the user(login from either one of them)
+      throw new ApiError(400, "username or email is required")
+   }
+
+   //! find user
+   const user = await User.findOne({ // finds the first entry and return
+      $or: [ {username}, {email}] // mongo operators => find users based on username or email basis.whatever found first returned
+   })   
+
+   if (!user) { // user nhi mila
+      throw new ApiError(404, "User does not exist")
+   }
+
+   //! password check
+   const isPasswordValid = await user.isPasswordCorrect(password)
+
+   if(!isPasswordValid) {
+      throw new ApiError(401, "Invalid user credentials")
+   }
+
+   //! tokens
+   //note: these tokens will be made a lot of times. make it a separeate method
+   const {accessToken, refreshToken}= await generateAceessAndRefreshTokens(user._id)
+
+   //! send cookies
+   //? what information to send to user (we should not send password so remove it)(also it doesnt has refresh token its separate)
+   const loggedInUser = await User.findById(user._id).
+   select("-password -refreshToken")
+
+   const options = { //* options for cookies
+      httpOnly: true, 
+      secure: true  // makes the cookie only server modifable (frontend can no longer modify cookies) just see it
+   }
+
+   return res
+   .status(200)
+   .cookie("accessToken", accessToken, options)
+   .cookie("refreshToken", refreshToken, options)
+   .json(
+      new ApiResponse(
+         200,
+         {
+            user: loggedInUser, accessToken, refreshToken // good practice to send again here
+         },
+         "User logged In Successfully"
+      )
+   ) // send the final json response
+   // we can set multiple cookies with .cookie again and again
+})
+
+
+//! logout user
+
+const logoutUser = asyncHandler(async(req, res) => {
+   // clear cookies
+   // reset refreshToken
+
+   User.findById
+
+   
+})
+
+export {
+   registerUser,
+   loginUser
+}
