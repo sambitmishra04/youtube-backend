@@ -201,15 +201,41 @@ const loginUser = asyncHandler(async (req,res) => {
 //! logout user
 
 const logoutUser = asyncHandler(async(req, res) => {
-   // clear cookies
-   // reset refreshToken
+   // clear cookies(server manageable only)
+   // reset refreshToken in db
 
-   User.findById
+   //? user kahan se laaye: cant ask him to enter id again for logout
+   //todo: use middleware(design own middleware) 
+   // now req has user access
+   await User.findByIdAndUpdate(
+      req.user._id,
+      {
+         $set :{
+            refreshTokem: undefined  // refreshToken removed from db
+         }
+      },
+      {
+            new: true  // the return response will have new updated values
+      }
 
-   
+   )
+
+   //* cookies clear
+   const options = {
+      httpOnly: true,
+      secure: true
+   }
+
+   return res
+   .status(200)
+   .clearCookie("accessToken", options)
+   .clearCookie("refreshToken", options)
+   .json(new ApiResponse(200, {}, "User logged out"))
+
 })
 
 export {
    registerUser,
-   loginUser
+   loginUser,
+   logoutUser
 }

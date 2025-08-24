@@ -10,6 +10,7 @@ app.use(cors({
     credentials: true // allow credentials
 }))
 ```
+- cookies can be accessed two way in both req, res. by using . and adding object
 
 - app.use() for middlwares and configuration
 - read npm.js cookie-parser
@@ -29,3 +30,8 @@ app.use(cors({
 - like checke if logged in before sending response
 - next is a flag of middlewares. work done => pass the flag next 
 - discard next at end after sending response
+
+# part 2
+
+-   //? user kahan se laaye: cant ask him to enter id again for logout
+-   //todo: use middleware(design own middleware)

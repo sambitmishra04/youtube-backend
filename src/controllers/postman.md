@@ -32,3 +32,7 @@
 
 
 # postman setup at end of part 1 video backend
+
+
+## header for auth.middleware
+- headers -> key(Authorisation) -> value(Beare "token name")
