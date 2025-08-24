@@ -8,8 +8,8 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 const generateAceessAndRefreshTokens = async(userId) => {  // our internal method, not web request handler so asunc handler util not required
    try {
       const user = await User.findById(userId) // find user
-      const accessToken = user.generateAceessToken()
-      const refreshToken = user.generatRefreshToken()
+      const accessToken = user.generateAccessToken()
+      const refreshToken = user.generateRefreshToken()
 
       user.refreshToken = refreshToken // injecting refresh token to the user object, ie save to db
       await user.save({validateBeforeSave: false}) // save to db but dont validate all fields (we add only one field here, mongo wont save usually as we have given other fields as reuired also)
@@ -17,6 +17,7 @@ const generateAceessAndRefreshTokens = async(userId) => {  // our internal metho
       return {accessToken, refreshToken}
 
    } catch (error) {
+      console.log(error)
       throw new ApiError(500, "Something went wrong while generating refresh and access token") // 500 as our own internal server error
    }
 }
@@ -170,7 +171,7 @@ const loginUser = asyncHandler(async (req,res) => {
 
    //! tokens
    //note: these tokens will be made a lot of times. make it a separeate method
-   const {accessToken, refreshToken}= await generateAceessAndRefreshTokens(user._id)
+   const {accessToken, refreshToken} = await generateAceessAndRefreshTokens(user._id)
 
    //! send cookies
    //? what information to send to user (we should not send password so remove it)(also it doesnt has refresh token its separate)

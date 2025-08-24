@@ -94,7 +94,7 @@ userSchema.methods.generateAccessToken = function() {
 }
 
 // another method to generate refresh token
-userSchema.methods.generateRefeshToken = function() {
+userSchema.methods.generateRefreshToken = function() {
     //* it is fast: async not required
      return jwt.sign( 
         {   

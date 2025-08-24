@@ -36,3 +36,8 @@
 
 ## header for auth.middleware
 - headers -> key(Authorisation) -> value(Beare "token name")
+
+
+
+## FOR LOGIN
+
