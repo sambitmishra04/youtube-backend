@@ -1,6 +1,6 @@
 //note: complex aggreagation queries required for video watvh history :: use package mongoose-aggregate-paginate-v2 :: read mongo aggregation pipeline
 
-import mongoose, {Schema} from mongoose
+import mongoose, {Schema} from "mongoose"
 import mongooseAggregatePaginate from "mongoose-aggregate-paginate-v2"
 
 const videoSchema = new Schema (
