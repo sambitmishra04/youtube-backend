@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { logoutUser,loginUser, registerUser } from "../controllers/user.controller.js";
+import { logoutUser,loginUser, registerUser, refreshAccessToken } from "../controllers/user.controller.js";
 import { upload } from "../middlewares/multer.middleware.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 
@@ -26,5 +26,6 @@ router.route("/login").post(loginUser)
 
 // secured routes
 router.route("/logout").post(verifyJWT, logoutUser)  // injected the middleware, the methods will execute in the order mentioned and next() tells to run the next method
+router.route("/refresh-token").post(refreshAccessToken)
 
 export default router
